@@ -1,8 +1,12 @@
+import tkinter as tk
+
+from tss.Application import Application
+
 def main():
-    """
-    TODO: この関数内でアプリケーションを起動する
-    """
-    pass
+    root = tk.Tk()
+
+    application = Application(root)
+    application.mainloop()
 
 
 if __name__ == '__main__':
