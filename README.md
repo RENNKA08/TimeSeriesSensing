@@ -27,10 +27,7 @@ from typing import Tuple
 
 class MySensorObserver(tss.SensorObserver):
     def __init__(self) -> None:
-        super().__init__()
-
-        # self.__labelsを必ず設定する必要があります。
-        self.__labels = ('value1', 'value2', 'value3')
+        super().__init__(('label1', 'label2'))
 
     def read_data(self) -> Tuple:
         """

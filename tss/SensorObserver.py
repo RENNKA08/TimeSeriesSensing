@@ -8,8 +8,8 @@ class SensorObserver(metaclass=ABCMeta):
     """
     センサとの通信を監視するためのクラス
     """
-    def __init__(self) -> None:
-        self.__labels: Tuple[str, ...] = ()
+    def __init__(self, labels: Tuple[str, ...]) -> None:
+        self.__labels = labels
         self.__observe_methods: List[Callable[[Tuple], None]] = []
 
         self.__is_observing = False
