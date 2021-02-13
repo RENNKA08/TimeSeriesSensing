@@ -122,3 +122,4 @@ if __name__ == '__main__':
     sensor_observer = SerialComObserver('COM3', 115200)
     
     recorder = tss.Recorder(sensor_observer)
+    recorder.mainloop()
