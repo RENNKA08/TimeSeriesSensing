@@ -1,6 +1,7 @@
 import cv2
 import json
 import tkinter as tk
+import tkinter.ttk as ttk
 
 from pathlib import Path
 from PIL import Image, ImageTk # type: ignore
@@ -39,11 +40,6 @@ class Recorder(tk.Frame):
 
         self.__fps = fps
 
-        # センサオブザーバー
-        self.__sensor_observer = sensor_observer
-        self.__sensor_observer.add_observe_method(self.__observe)
-        self.__sensor_observer.start_observe()
-
         # ビデオキャプチャ
         self.__video_capture: cv2.VideoCapture = cv2.VideoCapture(camera_id)
         self.__video_capture.set(cv2.CAP_PROP_FRAME_WIDTH, frame_width)
@@ -51,13 +47,20 @@ class Recorder(tk.Frame):
         self.__video_capture.set(cv2.CAP_PROP_FPS, fps)
 
         # ビデオライター
-        self.__video_writer: Optional[cv2.VideoWriter] = None
-        
-        # ウィジェットの作成・配置
-        self.__create_widgets()
+        self.__video_writer: Optional[cv2.VideoWriter] = None        
 
         # 現在録音中であるかのフラグ
         self.__is_recording: bool = False
+
+        # センサオブザーバー
+        self.__sensor_observer = sensor_observer
+
+        # ウィジェットの作成・配置
+        self.__create_widgets()
+
+        # センサオブザーバーの立ち上げ
+        self.__sensor_observer.add_observe_method(self.__observe)
+        self.__sensor_observer.start_observe()
 
         # update
         self.__update()
@@ -86,12 +89,25 @@ class Recorder(tk.Frame):
         self.__recording_button_label.set(u'録画開始')
         recording_button: tk.Button = tk.Button(controll_panel,
                                                 textvariable=self.__recording_button_label,
-                                                command=self.__on_recording_button_clicked)
-        recording_button.pack()
+                                                command=self.__on_recording_button_clicked,
+                                                width=10, height=2)
+        recording_button.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
 
         # ログ画面
-        log_frame: tk.Frame = tk.Frame(self, width=1200, height=270, background='red')
-        log_frame.grid(row=1, column=0)
+        log_frame: tk.Frame = tk.Frame(self, width=1200, height=270, background='#cccccc')
+        log_frame.grid(row=1, column=0, columnspan=2)
+
+        # ログ用テーブル
+        self.__tree_view = ttk.Treeview(log_frame)
+
+        self.__tree_view['columns'] = tuple([i for i in range(len(self.__sensor_observer.labels))])
+        self.__tree_view['show'] = 'headings'
+
+        for index, label in enumerate(self.__sensor_observer.labels):
+            self.__tree_view.column(index, width=75)
+            self.__tree_view.heading(index, text=label)
+
+        self.__tree_view.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
 
 
     def __update(self) -> None:
@@ -129,13 +145,13 @@ class Recorder(tk.Frame):
         """
         データが観測された際のメソッド
         """
-        print(data)
-
         if self.__is_recording:
             self.__record['data'].append({
                 'frame': self.__current_frame,
                 'data': list(data)
             })
+            
+            self.__tree_view.insert('', 'end', values=data)
 
 
     def __start_recording(self) -> None:
@@ -166,12 +182,18 @@ class Recorder(tk.Frame):
         self.__is_recording = False
         self.__video_writer = None
 
+        # 記録したデータをtss形式で保存する
+        file_path_str: str = filedialog.asksaveasfilename(filetypes=[('tss file', '*.tss')], initialfile=u'output.tss')
+
+        if file_path_str == '':
+            Path('~temp.mp4').unlink()
+            return
+
         # センサから取得したデータの記録をjson形式で保存する
         with Path('~temp.json').open(mode='w') as f:
             json.dump(self.__record, f, indent=4)
-
-        # 記録したデータをtss形式で保存する
-        tss_file_manager = TSSFileManager(filedialog.asksaveasfilename(filetypes=[('tss file', '*.tss')], initialfile=u'output.tss'))
+        
+        tss_file_manager = TSSFileManager(Path(file_path_str))
         tss_file_manager.save(Path('~temp.mp4'), Path('~temp.json'))
 
 
