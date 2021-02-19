@@ -3,7 +3,7 @@ import json
 import tkinter as tk
 
 from pathlib import Path
-from PIL import Image, ImageTk
+from PIL import Image, ImageTk # type: ignore
 from tkinter import filedialog
 from tss import SensorObserver
 from tss import TSSFileManager
@@ -168,7 +168,7 @@ class Recorder(tk.Frame):
 
         # センサから取得したデータの記録をjson形式で保存する
         with Path('~temp.json').open(mode='w') as f:
-            json.dump(self.__record, f)
+            json.dump(self.__record, f, indent=4)
 
         # 記録したデータをtss形式で保存する
         tss_file_manager = TSSFileManager(filedialog.asksaveasfilename(filetypes=[('tss file', '*.tss')], initialfile=u'output.tss'))
