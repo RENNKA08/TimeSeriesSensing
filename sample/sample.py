@@ -19,7 +19,7 @@ class SerialComObserver(tss.SensorObserver):
 
             ボーレート
         """
-        super().__init__(('No', 'Area1', 'Area3', 'Area4',
+        super().__init__(('No', 'Area1', 'Area2', 'Area3', 'Area4',
                           'Temp', 'AccelX', 'AccelY', 'AccelZ',
                           'GyroX', 'GyroY', 'GyroZ', 'MagX', 'MagY', 'MagZ'))
 
