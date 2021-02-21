@@ -51,3 +51,14 @@ class MySensorObserver(tss.SensorObserver):
 
 ### 再生する
 準備中
+
+### 計測データをCSVファイルとして出力する
+計測したデータを，ヘッダー付きのCSVファイルとして出力することができます。
+
+例えば，`data.tss`というファイルをもとに，`output.csv`を出力するには，以下のようなコマンドを実行します。
+
+```
+$ python -m tss gencsv data.tss output.csv
+```
+
+この時，`output.csv`が既に存在している場合は上書きされるため注意が必要です。
