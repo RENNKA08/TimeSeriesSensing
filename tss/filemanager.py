@@ -96,10 +96,11 @@ class TSSFileManager:
         if not self.__file_path.exists():
             raise FileNotFoundError()
 
-        if exists_ok:
-            shutil.rmtree(dir_path)
-        elif dir_path.exists():
-            raise TSSFileManager.FileAlreadyExistsError()
+        if dir_path.exists():
+            if exists_ok:
+                shutil.rmtree(dir_path)
+            else:
+                raise TSSFileManager.FileAlreadyExistsError()
 
         with zipfile.ZipFile(self.__file_path) as zip:
             zip.extractall(dir_path)
