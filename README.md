@@ -8,7 +8,7 @@
 
 ## 使い方
 ### モジュールをインストールする
-このプロジェクトをcloneしなくとも、pipコマンドを用いて以下のようにモジュールをインストールできます。
+このプロジェクトを`clone`しなくとも、`pip`コマンドを用いて以下のようにモジュールをインストールできます。
 
 ```
 pip install git+https://github.com/Hara-Yuma/TimeSeriesSensing
@@ -17,9 +17,9 @@ pip install git+https://github.com/Hara-Yuma/TimeSeriesSensing
 ### 使用するセンサに合ったSensorObserverを作成する
 tssを用いれば、任意のセンサ情報を動画データに紐づけて保存することができます。
 
-そのためにはまず、使用するセンサに合ったSensorObserverを作成する必要があります。
+そのためにはまず、使用するセンサに合った`SensorObserver`を作成する必要があります。
 
-SensorObserverはtss.SensorObserverを継承することで簡単に作成できます。
+`SensorObserver`は`tss.SensorObserver`を継承することで簡単に作成できます。
 
 ```
 import tss
@@ -47,7 +47,12 @@ class MySensorObserver(tss.SensorObserver):
 具体的な例はsample/sample.pyを確認してください。
 
 ### 録画する
-準備中
+録画を行うためには，`SensorObserver`を作成する必要があります。
+
+計測を行いたいセンサに合った`SensorObserver`を実装し，`Recorder`クラスに与えることで，
+簡単に録画を行うことができます。
+
+詳しいコードの例は，`sample/sample.py`を確認してください。
 
 ### 再生する
 準備中
