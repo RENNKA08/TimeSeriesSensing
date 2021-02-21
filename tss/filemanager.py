@@ -97,7 +97,7 @@ class TSSFileManager:
             raise FileNotFoundError()
 
         if exists_ok:
-            shutil.rmtree(self.__file_path)
+            shutil.rmtree(dir_path)
         elif dir_path.exists():
             raise TSSFileManager.FileAlreadyExistsError()
 
