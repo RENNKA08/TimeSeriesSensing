@@ -1,7 +1,7 @@
 import argparse
 
 from pathlib import Path
-from tss import TSSFileManager
+from tss import Player, TSSFileManager
 from typing import List
 
 
@@ -15,10 +15,21 @@ def player(args: List[str]) -> None:
 
         function(player)以降に与えられた引数
     """
-    parser = argparse.ArgumentParser(prog='tss player', description=u'tssファイルを再生するためのプレイヤー',
-                                     epilog=u'その他詳しい情報はGitHubのリポジトリ(https://github.com/Hara-Yuma/TimeSeriesSensing)を確認してください。')
-    
-    print(u'準備中')
+    len_args = len(args)
+
+    file_path = None
+
+    if len_args == 1:
+        file_path = Path(args[0])
+
+        if file_path.suffix != '.tss':
+            print(u'引数には.tss形式のファイルを指定してください。')
+            return
+    elif len_args > 1:
+        print(u'無効な引数:', ','.join(args[1:]))
+        return
+
+    Player(file_path)
 
 
 def gencsv(args: List[str]) -> None:
