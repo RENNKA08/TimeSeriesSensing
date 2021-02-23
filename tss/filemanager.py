@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import cv2
 import json
 import shutil
 import zipfile
@@ -150,11 +151,9 @@ class TSSFileManager:
         """
         if self.__extracted_file_path is None:
             try:
-                self.extract(Path('~temp'))
+                self.extract(Path('~temp'), exists_ok=True)
             except FileNotFoundError as e:
                 raise e
-            except TSSFileManager.FileAlreadyExistsError as e:
-                raise TSSFileManager.AutoExtractFailedError()
         
         with (self.__extracted_file_path / 'data.json').open(mode='r') as f:
             data = json.load(f)
@@ -178,3 +177,62 @@ class TSSFileManager:
 
         with file_path.open(mode='w') as f:
             f.write(csv)
+
+
+    def exportAsMD(self, folder_path: Path, exists_ok: bool = False) -> None:
+        """
+        結果を.md形式で出力する
+
+        Parameters
+        ----------
+        folder_path : Path
+
+            出力先のフォルダへのパス
+
+        exists_ok : bool
+
+            出力先として指定されたフォルダが既に存在している場合に上書きするか
+        """
+        if self.__extracted_file_path is None:
+            try:
+                self.extract(Path('~temp'), exists_ok=True)
+            except FileNotFoundError as e:
+                raise e
+
+        if (folder_path / 'img').is_dir() or (folder_path / (self.__file_path.stem + '.md')).is_file():
+            if exists_ok:
+                shutil.rmtree((folder_path / 'img'), ignore_errors=True)
+                (folder_path / (self.__file_path.stem + '.md')).unlink(missing_ok=True)
+            else:
+                shutil.rmtree('~temp')
+                raise TSSFileManager.FileAlreadyExistsError()
+
+        (folder_path / 'img').mkdir(exist_ok=True)
+
+        with (self.__extracted_file_path / 'data.json').open(mode='r') as f:
+            data = json.load(f)
+
+        video_capture = cv2.VideoCapture(str(self.__extracted_file_path / 'movie.mp4'))
+
+        with (folder_path / (self.__file_path.stem + '.md')).open(mode='w') as f:
+            f.write('# ' + self.__file_path.stem + '\n')
+
+            for record in data['data']:
+                frame_no = record['frame']
+
+                video_capture.set(cv2.CAP_PROP_POS_FRAMES, frame_no)
+
+                _, frame = video_capture.read()
+
+                cv2.imwrite(str(folder_path / f'img/frame{frame_no}.png'), frame)
+
+                f.write(f'## frame{frame_no}\n')
+
+                f.write(f'![frame{frame_no}](img/frame{frame_no}.png)\n')
+
+                f.write('|{}|\n'.format('|'.join(data['labels'])))
+                f.write('| :--- |' + ' :--- |' * (len(data['labels']) - 1) + '\n')
+                f.write('|{}|\n'.format('|'.join(map(str, record['data']))))
+
+        video_capture.release()
+        shutil.rmtree('~temp')
