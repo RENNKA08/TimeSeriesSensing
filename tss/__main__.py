@@ -47,7 +47,7 @@ def gencsv(args: List[str]) -> None:
 
     parser.add_argument('tssfile', help=u'tss形式のファイルへのパス')
     parser.add_argument('output', help=u'生成するcsvファイルへのパス')
-    
+
     parsed_args = parser.parse_args(args)
 
     target_file_path = Path(parsed_args.tssfile)
@@ -79,7 +79,7 @@ def genmd(args: List[str]) -> None:
 
     parser.add_argument('tssfile', help=u'tss形式のファイルへのパス')
     parser.add_argument('output', help=u'mdファイルを生成するディレクトリへのパス')
-    
+
     parsed_args = parser.parse_args(args)
 
     target_file_path = Path(parsed_args.tssfile)
@@ -100,7 +100,8 @@ def main() -> None:
     parser = argparse.ArgumentParser(prog='tss', description='Time Series Sensing',
                                      epilog=u'その他詳しい情報はGitHubのリポジトリ(https://github.com/Hara-Yuma/TimeSeriesSensing)を確認してください。')
 
-    parser.add_argument('function', choices=['player', 'gencsv', 'genmd'], help=u'機能を指定する。')
+    parser.add_argument('function', choices=[
+                        'player', 'gencsv', 'genmd'], help=u'機能を指定する。')
     parser.add_argument('args', nargs='*', help=u'機能毎の引数')
 
     parsed_args = parser.parse_args()

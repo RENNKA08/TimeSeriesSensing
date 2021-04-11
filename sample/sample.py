@@ -3,10 +3,12 @@ import tss
 
 from typing import Tuple
 
+
 class SerialComObserver(tss.SensorObserver):
     """
     シリアル通信でセンサとやり取りする場合のSensorObserver例
     """
+
     def __init__(self, port: str, baudrate: int) -> None:
         """
         Parameters
@@ -45,7 +47,6 @@ class SerialComObserver(tss.SensorObserver):
 
         self.__serial = serial.Serial(port, baudrate)
 
-
     def extract_data(self, data: int, position_indicator: int) -> int:
         """
         データから指定した部分の値を抜き出す
@@ -53,7 +54,7 @@ class SerialComObserver(tss.SensorObserver):
         Parameters
         ----------
         data : int
-        
+
             抜き出す元のデータ
 
         position_indicator : int
@@ -72,13 +73,13 @@ class SerialComObserver(tss.SensorObserver):
 
         extracted_data = data & position_indicator
 
-        most_significant_bit = extracted_data - (extracted_data & (position_indicator >> 1))
+        most_significant_bit = extracted_data - \
+            (extracted_data & (position_indicator >> 1))
 
         if most_significant_bit != 0:
             extracted_data -= most_significant_bit << 1
 
         return extracted_data
-
 
     def parse_data(self, raw_data: bytes) -> Tuple:
         """
@@ -93,7 +94,8 @@ class SerialComObserver(tss.SensorObserver):
         result_list = []
 
         for label in self.__data_format.keys():
-            result_list.append(self.extract_data(data, self.__data_format[label]))
+            result_list.append(self.extract_data(
+                data, self.__data_format[label]))
 
         temp_index = self.__labels.index('Temp')
 
@@ -101,7 +103,6 @@ class SerialComObserver(tss.SensorObserver):
         result_list[temp_index] += 26.75
 
         return tuple(result_list)
-        
 
     def read_data(self) -> Tuple:
         """
@@ -120,5 +121,5 @@ class SerialComObserver(tss.SensorObserver):
 
 if __name__ == '__main__':
     sensor_observer = SerialComObserver('COM3', 115200)
-    
+
     recorder = tss.Recorder(sensor_observer)

@@ -8,6 +8,7 @@ import zipfile
 from pathlib import Path
 from typing import Optional
 
+
 class TSSFileManager:
     """
     .tss形式のファイルを管理するためのクラス
@@ -19,13 +20,11 @@ class TSSFileManager:
         """
         pass
 
-
     class AutoExtractFailedError(BaseException):
         """
         自動解凍に失敗したことを知らせる例外クラス
         """
         pass
-
 
     def __init__(self, file_path: Path) -> None:
         """
@@ -39,7 +38,6 @@ class TSSFileManager:
 
         self.__extracted_file_path: Optional[Path] = None
 
-    
     def save(self,
              movie_file_path: Path,
              record_file_path: Path,
@@ -68,7 +66,6 @@ class TSSFileManager:
         if delete_original_files:
             movie_file_path.unlink()
             record_file_path.unlink()
-
 
     def extract(self, dir_path: Path, exists_ok: bool = False) -> None:
         """
@@ -107,7 +104,6 @@ class TSSFileManager:
             zip.extractall(dir_path)
 
         self.__extracted_file_path = dir_path
-
 
     def exportAsCSV(self,
                     file_path: Path,
@@ -154,7 +150,7 @@ class TSSFileManager:
                 self.extract(Path('~temp'), exists_ok=True)
             except FileNotFoundError as e:
                 raise e
-        
+
         with (self.__extracted_file_path / 'data.json').open(mode='r') as f:
             data = json.load(f)
 
@@ -164,7 +160,7 @@ class TSSFileManager:
 
         if start_frame is None:
             start_frame = -1
-        
+
         if end_frame is None:
             end_frame = data['data'][-1]['frame']
 
@@ -177,7 +173,6 @@ class TSSFileManager:
 
         with file_path.open(mode='w') as f:
             f.write(csv)
-
 
     def exportAsMD(self, folder_path: Path, exists_ok: bool = False) -> None:
         """
@@ -212,7 +207,8 @@ class TSSFileManager:
         with (self.__extracted_file_path / 'data.json').open(mode='r') as f:
             data = json.load(f)
 
-        video_capture = cv2.VideoCapture(str(self.__extracted_file_path / 'movie.mp4'))
+        video_capture = cv2.VideoCapture(
+            str(self.__extracted_file_path / 'movie.mp4'))
 
         with (folder_path / (self.__file_path.stem + '.md')).open(mode='w') as f:
             f.write('# ' + self.__file_path.stem + '\n')
@@ -224,14 +220,16 @@ class TSSFileManager:
 
                 _, frame = video_capture.read()
 
-                cv2.imwrite(str(folder_path / f'img/frame{frame_no}.png'), frame)
+                cv2.imwrite(
+                    str(folder_path / f'img/frame{frame_no}.png'), frame)
 
                 f.write(f'## frame{frame_no}\n')
 
                 f.write(f'![frame{frame_no}](img/frame{frame_no}.png)\n')
 
                 f.write('|{}|\n'.format('|'.join(data['labels'])))
-                f.write('| :--- |' + ' :--- |' * (len(data['labels']) - 1) + '\n')
+                f.write('| :--- |' + ' :--- |' *
+                        (len(data['labels']) - 1) + '\n')
                 f.write('|{}|\n'.format('|'.join(map(str, record['data']))))
 
         video_capture.release()
