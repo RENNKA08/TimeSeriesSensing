@@ -1,0 +1,20 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+tss = {editable = true, path = "."}
+
+[dev-packages]
+autopep8 = "*"
+flake8 = "*"
+flake8-import-order = "*"
+
+[requires]
+python_version = "3.9"
+
+[scripts]
+exsample = "python sample/sample.py"
+lint = "flake8 --show-source ."
+format = "autopep8 -ivr ."
