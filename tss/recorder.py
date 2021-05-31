@@ -143,11 +143,14 @@ class Recorder(tk.Frame):
             self.__recording_button_label.set(u'録画停止')
             self.__start_recording()
 
-    def __observe(self, data: Tuple) -> None:
+    def __observe(self, data: Optional[Tuple]) -> None:
         """
         データが観測された際のメソッド
         """
         if self.__is_recording:
+            if data is None:
+                return
+
             self.__record['data'].append({
                 'frame': self.__current_frame,
                 'data': list(data)
