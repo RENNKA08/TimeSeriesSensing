@@ -67,3 +67,14 @@ $ python -m tss gencsv data.tss output.csv
 ```
 
 この時，`output.csv`が既に存在している場合は上書きされるため注意が必要です。
+
+### 計測したデータをMarkDownファイルとして出力する
+計測したデータと，それを受信したフレームの画像をまとめたMarkDownファイルを出力することができます。
+
+MarkDownファイルと共に，`images`ディレクトリが自動生成されます。
+
+例えば，`data.tss`というファイルをもとにして，`output/`以下にMarkDownファイルを生成するためには次のように実行します．
+
+```
+$ python -m tss genmd data.tss output/
+```
